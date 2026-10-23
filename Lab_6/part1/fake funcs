@@ -1,0 +1,155 @@
+# write your asm code here
+# rcx rdx r8 r9
+# 64= y 32=j int=i 
+
+  .globl _Z5counti
+_Z5counti: 
+  sub $3, %rcx
+  mov $1, %rdx
+
+countloop:
+  add $3, %rdx
+  cmp %rcx, %rdx
+  jle countloop
+countout:
+  mov %rdx, %rax
+  ret
+
+  .globl _Z5sumsqPKyj
+_Z5sumsqPKyj:
+  xor %rax, %rax
+  xor %r9, %r9
+  xor %r8, %r8
+sqloop:
+  mov (%rcx), %r9
+  add $8, %rcx
+  imul %r9, %r9
+  add %r9, %rax
+  add $1, %r8
+  cmp %rdx, %r8
+  jne sqloop
+sqout:
+  ret
+
+  .globl _Z4add1Pyj
+_Z4add1Pyj:
+  xor %r9, %r9
+  xor %r8, %r8
+add1loop:
+  mov (%rcx),%r9
+  add $1, %r9
+  mov %r9,(%rcx)
+  add $8, %rcx
+  sub $1, %rdx
+  cmp %rdx, %r8
+  jne add1loop
+add1loopout:
+  ret
+
+  .globl _Z11replaceZeroy
+_Z11replaceZeroy:
+  xor %rdx , %rdx
+  mov $0xF2ECB4CE , %rdx
+  and %rdx, %rcx
+  mov %rcx , %rax
+  ret
+
+  .globl _Z10replaceOney
+_Z10replaceOney:
+  xor %rdx , %rdx
+  mov $0xF2ECBEFE , %rdx
+  or %rdx, %rcx
+  mov %rcx , %rax
+  ret
+
+  .globl _Z7togglesy
+_Z7togglesy:
+  xor %rdx , %rdx
+  mov $0x00000E70 , %rdx
+  xor %rdx, %rcx
+  mov %rcx , %rax
+  ret
+
+
+
+  
+
+  
+
+  
+
+
+
+
+
+  xor %rdx , %rdx
+  xor %r8 , %r8
+  xor %rax , %rax
+  xor %r9 ,%r9
+  mov %rcx, %r8
+  mov $0x0000000000000002, %rdx
+replaceDloop:
+  and $0x000000000000000F , %r8 # 0x987654321D9 and F = 0x0000...(some hex)
+  cmp $0x000000000000000D, %r8 # comapre if the result = 0xD
+
+  add $1 , %r9
+  je FoundD # if equal to 0xD then move to Found D
+  
+  mov %rcx , %r8
+  ror $1 , %r8
+  cmp $16 , %r9
+  jl replaceDloop
+  cmp $16 , %r9
+  je Finish
+
+FoundD:
+  and $0x000000000000000F, %r8 # 0xD and 0xF  would equal to  0xD
+  and $0x000000000000000C, %r8 # r8 = 0xC
+
+ContinueD:
+  rol $1 , %r8 # when properly loop r8 = c in anticipated position
+  rol $1, %rdx # r8 = 0x2 in anticipated position # goal is to /and %rdx with rcx to have D elements replaced with zero
+  add $1 , %rax
+  cmp %r9 , %rax
+  jne ContinueD
+
+FinalD:
+  and %rdx, %rcx # 0x987654321D9 and 0x00000000020 to get  0x98765432109
+  or %r8, %rcx #  0x98765432109 or 0x0000000000C0
+  cmp $16 , %r9
+  jne replaceDloop
+
+Finish:
+  mov %rcx, %rax
+  ret
+
+
+
+
+Failed attempt 2
+replaceDLoop:
+  and %r8, %rdx # extract the last   hex digit/ in this case = 0x00000000000000000009
+  cmp $0xD , %rdx # compares the last   hex digit to D/ 0x..9 comapared to 0x...D
+  je work # if rdx = 0xD  then go to work label
+  ror $4, %rcx # if first digit is not D then rotate right  by 4  so new digit is the first  one so we compare new one
+  mov %rcx, %rdx #  make rdx to be the new rotated rcx
+  add $1 , %r9 # counter
+  cmp $16 , %r9
+  jne replaceDLoop # loop will stop at the 16th iteration (16 hex digits in 64 bit)
+  cmp $16 , %r9
+  je Finish
+
+work:
+  mov %rcx, %rdx  # on second loop rdx 0x9987654321D
+  xor $0x1, %rdx  # rdx = 0x9987654321DC
+  cmp $16 , %r9
+  jne replaceDLoop
+Finish:
+  mov %rdx, %rax
+  ret
+
+
+
+
+
+

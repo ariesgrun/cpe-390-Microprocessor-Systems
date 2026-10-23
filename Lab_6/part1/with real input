@@ -1,0 +1,92 @@
+# write your asm code here
+# rcx rdx r8 r9
+# 64= y 32=j int=i 
+
+  .globl _Z5counti
+_Z5counti: 
+  sub $3, %rcx
+  mov $1, %rdx
+
+countloop:
+  add $3, %rdx
+  cmp %rcx, %rdx
+  jle countloop
+countout:
+  mov %rdx, %rax
+  ret
+
+  .globl _Z5sumsqPKyj
+_Z5sumsqPKyj:
+  xor %rax, %rax
+  xor %r9, %r9
+  xor %r8, %r8
+sqloop:
+  mov (%rcx), %r9
+  add $8, %rcx
+  imul %r9, %r9
+  add %r9, %rax
+  add $1, %r8
+  cmp %rdx, %r8
+  jne sqloop
+sqout:
+  ret
+
+  .globl _Z4add1Pyj
+_Z4add1Pyj:
+  xor %r9, %r9
+  xor %r8, %r8
+add1loop:
+  mov (%rcx),%r9
+  add $1, %r9
+  mov %r9,(%rcx)
+  add $8, %rcx
+  sub $1, %rdx
+  cmp %rdx, %r8
+  jne add1loop
+add1loopout:
+  ret
+
+  .globl _Z11replaceZeroy
+_Z11replaceZeroy:
+  xor %rdx , %rdx
+  mov $0xF2ECB4CE , %rdx
+  and %rdx, %rcx
+  mov %rcx , %rax
+  ret
+
+  .globl _Z10replaceOney
+_Z10replaceOney:
+  xor %rdx , %rdx
+  mov $0xF2ECBEFE , %rdx
+  or %rdx, %rcx
+  mov %rcx , %rax
+  ret
+
+  .globl _Z7togglesy
+_Z7togglesy:
+  xor %rdx , %rdx
+  mov $0x00000E70 , %rdx
+  xor %rdx, %rcx
+  mov %rcx , %rax
+  ret
+
+
+
+  
+
+  
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
